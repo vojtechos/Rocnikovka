@@ -7,20 +7,20 @@ import java.util.Arrays;
 public class SimpleConvolutionService implements ConvolutionService {
 
     @Override
-    public int[][][] convolution(Image image, Filter filter) {
+    public int[][][] convolution(Image image, Filter filter, double multipl) {
         int[][][] imageArray = image.getArray();
         int[][] filterArray = filter.getArray();
 
-        int[][] convolutionR = doConvolution(imageArray[0], filterArray);
-        int[][] convolutionG = doConvolution(imageArray[1], filterArray);
-        int[][] convolutionB = doConvolution(imageArray[2], filterArray);
+        int[][] convolutionR = doConvolution(imageArray[0], filterArray, multipl);
+        int[][] convolutionG = doConvolution(imageArray[1], filterArray, multipl);
+        int[][] convolutionB = doConvolution(imageArray[2], filterArray, multipl);
 
         return new int[][][] {
                 convolutionR, convolutionG, convolutionB
         };
     }
 
-    private int[][] doConvolution(int[][] image, int[][] filterArray) {
+    private int[][] doConvolution(int[][] image, int[][] filterArray, double multipl) {
 
         int[][] output = new int[image.length][image[0].length];
 
@@ -40,8 +40,8 @@ public class SimpleConvolutionService implements ConvolutionService {
                         }
                     }
                 }
+                output[i][j] *= multipl;
             }
-            System.out.println(Arrays.deepToString(output));
         }
         return output;
     }

@@ -1,38 +1,17 @@
 package cz.spsmb.convolution;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 
 public class ConvertImage {
 
-    /**
-     * Converts a given Image into a BufferedImage
-     *
-     * @param img The Image to be converted
-     * @return The converted BufferedImage
-     */
-    public static BufferedImage toBufferedImage(Image img)
-    {
-        if (img instanceof BufferedImage)
-        {
-            return (BufferedImage) img;
-        }
-
-        // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-        // Draw the image on to the buffered image
-        Graphics2D bGr = bimage.createGraphics();
-        bGr.drawImage(img, 0, 0, null);
-        bGr.dispose();
-
-        // Return the buffered image
-        return bimage;
-    }
-
-    public static int[][][] convertImageToIntArray(Image img) {
-        BufferedImage bufferedImage = toBufferedImage(img);
-
+    public static int[][][] convertImageToIntArray(javafx.scene.image.Image img) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
         int width = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
 
@@ -42,7 +21,6 @@ public class ConvertImage {
             for (int j = 0; j < height; j++) {
 
                 int pixelIntValue = bufferedImage.getRGB(i, j);
-            //    toBinaryString(pixelIntValue);
 
                 int r = (pixelIntValue >> 16 << 24 >>> 24);
                 int g = (pixelIntValue >> 8 << 24 >>> 24);
@@ -57,8 +35,26 @@ public class ConvertImage {
         return RGB;
     }
 
-    public static Image convertArrayToImg(int[][][] img) {
+    static BufferedImage deepCopy(BufferedImage bi) {
+        ColorModel cm = bi.getColorModel();
+        boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+        WritableRaster raster = bi.copyData(null);
+        return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+    }
 
-        return null;
+    public static javafx.scene.image.Image convertArrayToImg(Image image, int[][][] img) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+
+        for(int i = 0; i < img[0].length; i++) {
+            for(int j = 0; j < img[0][i].length; j++) {
+                int pixel = (255 << 8);
+                pixel = (pixel | img[0][i][j]) << 8;
+                pixel = (pixel | img[1][i][j]) << 8;
+                pixel = pixel | img[2][i][j];
+                bufferedImage.setRGB(i,j, pixel);
+            }
+        }
+
+        return SwingFXUtils.toFXImage(bufferedImage, null);
     }
 }

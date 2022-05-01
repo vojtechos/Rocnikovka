@@ -85,13 +85,12 @@ public class ConvolutionController implements Initializable {
 
         Image image = beforeImageView.getImage();
 
-        AfterImageView.setImage(image);
         ConvolutionService convolutionService = new SimpleConvolutionService();
         // ziskat filter
         Filter filter = new Filter() {
             @Override
             public int[][] getArray() {
-                return new int[0][];
+                return new int[][] {{1,0,-1}, {1,0,-1}, {1,0,-1}};
             }
         };
 
@@ -103,9 +102,9 @@ public class ConvolutionController implements Initializable {
             }
         };
 
-        int[][][] img  = convolutionService.convolution(image1, filter);
-        Image convertedImg = S.convertArrayToImg(img);
-
+        int[][][] img  = convolutionService.convolution(image1, filter, 1./9);
+        Image convertedImg = ConvertImage.convertArrayToImg(image, img);
+        AfterImageView.setImage(convertedImg);
     }
 
     public void onInstateValues(MouseEvent mouseEvent) {

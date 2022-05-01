@@ -6,6 +6,6 @@ import cz.spsmb.model.Image;
 
 public interface ConvolutionService {
 
-    int[][][] convolution(Image image, Filter filter);
+    int[][][] convolution(Image image, Filter filter, double multipl);
 
 }

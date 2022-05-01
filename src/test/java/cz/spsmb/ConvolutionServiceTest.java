@@ -43,7 +43,7 @@ public class ConvolutionServiceTest {
 
     @Test
     public void testConvolution() {
-        int[][][] convolutionResult = convolutionService.convolution(getMockImage(), getMockFilter());
+        int[][][] convolutionResult = convolutionService.convolution(getMockImage(), getMockFilter(), 1);
 
         assertArrayEquals(convolutionResult, new int[][][]{
                 {
