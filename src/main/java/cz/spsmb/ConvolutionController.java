@@ -3,6 +3,10 @@ package cz.spsmb;
 import cz.spsmb.convolution.ConvertImage;
 import cz.spsmb.convolution.ConvolutionService;
 import cz.spsmb.convolution.SimpleConvolutionService;
+import cz.spsmb.filters.EdgeDetectionFilter;
+import cz.spsmb.filters.EdgeDetectionFilter2;
+import cz.spsmb.filters.EdgeDetectionFilter3;
+import cz.spsmb.filters.SharpenFilter;
 import cz.spsmb.model.Filter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +19,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
-
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -53,11 +56,13 @@ public class ConvolutionController implements Initializable {
     @FXML
     public TextArea Value9;
 
+    Filter activeFilter;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        this.FilterComboBox.getItems().addAll(new String[]{"Edge Detection"});
+        this.FilterComboBox.getItems().addAll(new String[]{"Edge Detection", "Edge Detection2", "Edge Detection3", "Sharpen"});
 
     }
 
@@ -87,24 +92,17 @@ public class ConvolutionController implements Initializable {
 
         AfterImageView.setImage(image);
         ConvolutionService convolutionService = new SimpleConvolutionService();
-        // ziskat filter
-        Filter filter = new Filter() {
-            @Override
-            public int[][] getArray() {
-                return new int[0][];
-            }
-        };
 
         //Ziskej obrazek
-        cz.spsmb.model.Image image1 = new cz.spsmb.model.Image() {
-            @Override
-            public int[][][] getArray() {
-                return ConvertImage.convertImageToIntArray(image);
-            }
-        };
-
-        int[][][] img  = convolutionService.convolution(image1, filter);
-        Image convertedImg = S.convertArrayToImg(img);
+//        cz.spsmb.model.Image image1 = new cz.spsmb.model.Image() {
+//            @Override
+//            public int[][][] getArray() {
+//                return ConvertImage.convertImageToIntArray(image);
+//            }
+//        };
+//
+//        int[][][] img  = convolutionService.convolution(image1, activeFilter);
+//        Image convertedImg = S.convertIntArrayToImg(img);
 
     }
 
@@ -112,22 +110,29 @@ public class ConvolutionController implements Initializable {
 
         String operation = FilterComboBox.getSelectionModel().getSelectedItem();
         switch (operation) {
-            case "Edge Detection" -> instateValues();
+            case "Edge Detection" -> instateValues(new EdgeDetectionFilter());
+            case "Edge Detection2" -> instateValues(new EdgeDetectionFilter2());
+            case "Edge Detection3" -> instateValues(new EdgeDetectionFilter3());
+            case "Sharpen" -> instateValues(new SharpenFilter());
         }
 
     }
 
-    private void instateValues() {
+    public void instateValues(Filter filter) {
 
-        Value1.setText("0");
-        Value2.setText("0");
-        Value3.setText("0");
-        Value4.setText("0");
-        Value5.setText("0");
-        Value6.setText("0");
-        Value7.setText("0");
-        Value8.setText("0");
-        Value9.setText("0");
+        activeFilter = filter;
+
+        Value1.setText(String.valueOf(filter.getArray()[0][0]));
+        Value2.setText(String.valueOf(filter.getArray()[0][1]));
+        Value3.setText(String.valueOf(filter.getArray()[0][2]));
+        Value4.setText(String.valueOf(filter.getArray()[1][0]));
+        Value5.setText(String.valueOf(filter.getArray()[1][1]));
+        Value6.setText(String.valueOf(filter.getArray()[1][2]));
+        Value7.setText(String.valueOf(filter.getArray()[2][0]));
+        Value8.setText(String.valueOf(filter.getArray()[2][1]));
+        Value9.setText(String.valueOf(filter.getArray()[2][2]));
 
     }
+
+
 }

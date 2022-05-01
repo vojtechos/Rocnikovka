@@ -57,8 +57,24 @@ public class ConvertImage {
         return RGB;
     }
 
-    public static Image convertArrayToImg(int[][][] img) {
+    public static Image convertIntArrayToImg(int[][][] img) {
 
-        return null;
+        BufferedImage image = new BufferedImage(img[0].length, img[0][0].length, BufferedImage.TYPE_INT_RGB);
+
+        for (int i = 0; i < img[0].length; i++) {
+            for (int j = 0; j < img[0][0].length; j++) {
+
+                int r = img[0][i][j];
+                int g = img[1][i][j];
+                int b = img[2][i][j];
+
+                int color = (r << 16) | (g << 8) | b;
+
+                image.setRGB(i,j, color);
+
+            }
+        }
+
+        return image;
     }
 }
