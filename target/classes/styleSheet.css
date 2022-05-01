@@ -1,0 +1,27 @@
+.root {
+    -fx-background: #474747;
+}
+
+.button, .styledButton, .text-area .content {
+    -fx-text-fill: #cacaca;
+    -fx-background-color: #5e5e5e;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+    -fx-margin: 5px;
+}
+
+.text-area {
+    -fx-text-fill: #cacaca;
+}
+
+.button:hover, .styledButton:hover, .text-area:focused .content, .text-area:focused {
+    -fx-background-color: #757575;
+    -fx-border-style: none;
+    -fx-border-width: 0;
+}
+
+.border {
+    -fx-background-color: #252525;
+    -fx-border-radius: 50px;
+    -fx-padding: 5px;
+}

@@ -2,8 +2,13 @@ package cz.spsmb;
 
 import cz.spsmb.convolution.ConvertImage;
 import cz.spsmb.convolution.ConvolutionService;
-import cz.spsmb.convolution.SimpleConvolutionService;
+import cz.spsmb.convolution.    SimpleConvolutionService;
+import cz.spsmb.filters.EdgeDetectionFilter;
+import cz.spsmb.filters.EdgeDetectionFilter2;
+import cz.spsmb.filters.EdgeDetectionFilter3;
+import cz.spsmb.filters.SharpenFilter;
 import cz.spsmb.model.Filter;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -16,11 +21,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static java.nio.file.Files.write;
 
 public class ConvolutionController implements Initializable {
 
@@ -53,11 +63,13 @@ public class ConvolutionController implements Initializable {
     @FXML
     public TextArea Value9;
 
+    Filter activeFilter;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        this.FilterComboBox.getItems().addAll(new String[]{"Edge Detection"});
+        this.FilterComboBox.getItems().addAll(new String[]{"Edge Detection", "Edge Detection2", "Edge Detection3", "Sharpen"});
 
     }
 
@@ -86,15 +98,8 @@ public class ConvolutionController implements Initializable {
         Image image = beforeImageView.getImage();
 
         ConvolutionService convolutionService = new SimpleConvolutionService();
-        // ziskat filter
-        Filter filter = new Filter() {
-            @Override
-            public int[][] getArray() {
-                return new int[][] {{1,0,-1}, {1,0,-1}, {1,0,-1}};
-            }
-        };
 
-        //Ziskej obrazek
+
         cz.spsmb.model.Image image1 = new cz.spsmb.model.Image() {
             @Override
             public int[][][] getArray() {
@@ -102,31 +107,50 @@ public class ConvolutionController implements Initializable {
             }
         };
 
-        int[][][] img  = convolutionService.convolution(image1, filter, 1./9);
-        Image convertedImg = ConvertImage.convertArrayToImg(image, img);
+        int[][][] img  = convolutionService.convolution(image1, activeFilter, 1./9);
+        Image convertedImg = ConvertImage.convertIntArrayToImg(image, img);
         AfterImageView.setImage(convertedImg);
+
     }
 
     public void onInstateValues(MouseEvent mouseEvent) {
 
         String operation = FilterComboBox.getSelectionModel().getSelectedItem();
         switch (operation) {
-            case "Edge Detection" -> instateValues();
+            case "Edge Detection" -> instateValues(new EdgeDetectionFilter());
+            case "Edge Detection2" -> instateValues(new EdgeDetectionFilter2());
+            case "Edge Detection3" -> instateValues(new EdgeDetectionFilter3());
+            case "Sharpen" -> instateValues(new SharpenFilter());
         }
 
     }
 
-    private void instateValues() {
+    public void instateValues(Filter filter) {
 
-        Value1.setText("0");
-        Value2.setText("0");
-        Value3.setText("0");
-        Value4.setText("0");
-        Value5.setText("0");
-        Value6.setText("0");
-        Value7.setText("0");
-        Value8.setText("0");
-        Value9.setText("0");
+        activeFilter = filter;
 
+        Value1.setText(String.valueOf(filter.getArray()[0][0]));
+        Value2.setText(String.valueOf(filter.getArray()[0][1]));
+        Value3.setText(String.valueOf(filter.getArray()[0][2]));
+        Value4.setText(String.valueOf(filter.getArray()[1][0]));
+        Value5.setText(String.valueOf(filter.getArray()[1][1]));
+        Value6.setText(String.valueOf(filter.getArray()[1][2]));
+        Value7.setText(String.valueOf(filter.getArray()[2][0]));
+        Value8.setText(String.valueOf(filter.getArray()[2][1]));
+        Value9.setText(String.valueOf(filter.getArray()[2][2]));
+
+    }
+
+
+    public void onDownloadButton(MouseEvent mouseEvent) throws IOException {
+
+        Image imageToBeSaved = AfterImageView.getImage();
+        try{
+        File file = new File("C:\\Users\\Vojta\\Documents\\Kódy\\demo\\src\\main\\java\\cz\\spsmb\\images\\img2.png");
+        ImageIO.write(SwingFXUtils.fromFXImage(imageToBeSaved, null), "png", file);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }

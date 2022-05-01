@@ -2,7 +2,6 @@ package cz.spsmb.convolution;
 
 import cz.spsmb.model.Filter;
 import cz.spsmb.model.Image;
-import java.util.Arrays;
 
 public class SimpleConvolutionService implements ConvolutionService {
 

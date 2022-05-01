@@ -8,8 +8,8 @@ public class EdgeDetectionFilter implements Filter {
     public int[][] getArray() {
         return new int[][]{
                 {1,0,-1},
-                {0,0,0},
-                {-1,0,1}
+                {1,0,-1},
+                {1,0,-1}
         };
 
     }

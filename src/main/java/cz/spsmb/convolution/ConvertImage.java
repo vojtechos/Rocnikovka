@@ -10,8 +10,16 @@ import java.awt.image.WritableRaster;
 
 public class ConvertImage {
 
+    static BufferedImage deepCopy(BufferedImage bi) {
+        ColorModel cm = bi.getColorModel();
+        boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+        WritableRaster raster = bi.copyData(null);
+        return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+    }
+
     public static int[][][] convertImageToIntArray(javafx.scene.image.Image img) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
+
         int width = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
 
@@ -21,6 +29,7 @@ public class ConvertImage {
             for (int j = 0; j < height; j++) {
 
                 int pixelIntValue = bufferedImage.getRGB(i, j);
+            //    toBinaryString(pixelIntValue);
 
                 int r = (pixelIntValue >> 16 << 24 >>> 24);
                 int g = (pixelIntValue >> 8 << 24 >>> 24);
@@ -35,23 +44,19 @@ public class ConvertImage {
         return RGB;
     }
 
-    static BufferedImage deepCopy(BufferedImage bi) {
-        ColorModel cm = bi.getColorModel();
-        boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-        WritableRaster raster = bi.copyData(null);
-        return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
-    }
+    public static javafx.scene.image.Image convertIntArrayToImg(Image image, int[][][] img) {
 
-    public static javafx.scene.image.Image convertArrayToImg(Image image, int[][][] img) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
 
-        for(int i = 0; i < img[0].length; i++) {
-            for(int j = 0; j < img[0][i].length; j++) {
+        for (int i = 0; i < img[0].length; i++) {
+            for (int j = 0; j < img[0][i].length; j++) {
+
                 int pixel = (255 << 8);
                 pixel = (pixel | img[0][i][j]) << 8;
                 pixel = (pixel | img[1][i][j]) << 8;
                 pixel = pixel | img[2][i][j];
                 bufferedImage.setRGB(i,j, pixel);
+
             }
         }
 
